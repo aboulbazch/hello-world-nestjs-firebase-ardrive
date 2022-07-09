@@ -42,7 +42,7 @@ export class AppService {
   }
 
   async uploadFile(): Promise<ArFSResult> {
-    const wrappedEntity = wrapFileOrFolder('./test2');
+    const wrappedEntity = wrapFileOrFolder('./test1');
     const destFolderId = EID("517e37c1-f524-4784-9435-50fc42dd46e9");
     return await this.arDrive.uploadAllEntities({
 
@@ -52,18 +52,22 @@ export class AppService {
 
   async uploadFileFromFirebaseToArDrive() {
 
-    const bucket = getStorage().bucket("helloworldnestjs.appspot.com");
-    bucket.getFiles()
-    .then(data => {
-      console.log(data);
-    })
-    // console.log(storage);
-    // /* ******* ARDrive Upload Section ******** */
-    // const wrappedEntity = wrapFileOrFolder('./test1');
-    // const destFolderId = EID("517e37c1-f524-4784-9435-50fc42dd46e9");
-    // return await this.arDrive.uploadAllEntities({
+    const bucket = getStorage().bucket(process.env.BUCKET_NAME);
+ 
+    const fileName = "290920929_409102174571609_4071372868097842209_n.jpeg";
 
-    //     entitiesToUpload: [{ wrappedEntity, destFolderId }]
-    // });
+    await bucket.file(fileName)
+    .download({
+      destination: process.env.TMP_FILES_DIR + fileName
+    }).then(data => {
+      console.log(data);
+    });
+    /* ******* ARDrive Upload Section ******** */
+    const wrappedEntity = wrapFileOrFolder(process.env.TMP_FILES_DIR + fileName);
+    const destFolderId = EID("517e37c1-f524-4784-9435-50fc42dd46e9");
+    return await this.arDrive.uploadAllEntities({
+
+        entitiesToUpload: [{ wrappedEntity, destFolderId }]
+    });
   }
 }
