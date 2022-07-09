@@ -6,7 +6,9 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
     FirebaseModule.forRoot({
       googleApplicationCredential: process.env.GOOGLE_APPLICATION_CREDENTIALS_FILE,
     })
